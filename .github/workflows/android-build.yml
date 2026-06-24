@@ -1,0 +1,55 @@
+name: Compilación Automatizada FinaPro APK
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Descargar Código del Repositorio
+      uses: actions/checkout@v4
+
+    - name: Configurar Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+        cache: 'npm'
+
+    - name: Instalar Dependencias del Proyecto
+      run: npm ci
+
+    - name: Ejecutar Pruebas Unitarias de Fórmulas Financieras
+      run: npm run test
+
+    - name: Compilar Recursos Web Estáticos
+      run: npm run build
+
+    - name: Configurar Entorno de Java (Requerido para Android)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'zulu'
+        java-version: '17'
+
+    - name: Sincronizar Código con Proyecto Android Nativo
+      run: |
+        npx cap init FinaPro com.modaevelyn.finapro --web-dir=dist
+        npx cap add android
+        npm run cap:sync
+
+    - name: Compilar APK de Depuración (Debug APK)
+      run: |
+        cd android
+        chmod +x ./gradlew
+        ./gradlew assembleDebug
+
+    - name: Preservar Archivo Binario (.APK) como Artefacto
+      uses: actions/upload-artifact@v4
+      with:
+        name: FinaPro-Debug-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
+        retention-days: 7
