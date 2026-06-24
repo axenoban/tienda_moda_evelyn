@@ -1,0 +1,30 @@
+# Dependencias
+node_modules/
+.pnpm-store/
+
+# Compilación y Salidas
+dist/
+build/
+*.apk
+*.aab
+
+# Variables de entorno y llaves
+.env
+.env.local
+*.jks
+*.keystore
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Archivos específicos de Android generados dinámicamente
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
