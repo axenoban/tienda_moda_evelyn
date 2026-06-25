@@ -1,7 +1,7 @@
 :root {
   --bg-primary: #121212;
   --bg-surface: #1e1e1e;
-  --accent-color: #00e676; /* Verde de alta visibilidad para confirmaciones */
+  --accent-color: #00e676; /* Verde de alta visibilidad */
   --text-main: #ffffff;
   --text-muted: #b3b3b3;
   --border-color: #333333;
@@ -12,40 +12,77 @@ body {
   background-color: var(--bg-primary);
   color: var(--text-main);
   font-family: system-ui, -apple-system, sans-serif;
-  user-select: none;
 }
 
-.keyboard-container {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  padding: 16px;
+/* Navegación por pestañas superior fija */
+.nav-tabs {
+  display: flex;
   background-color: var(--bg-surface);
-  border-top: 2px solid var(--border-color);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  border-bottom: 2px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.key-btn {
-  background-color: #292929;
+.tab-btn {
+  flex: 1;
+  padding: 15px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+.tab-btn.active {
+  color: var(--accent-color);
+  border-bottom: 3px solid var(--accent-color);
+}
+
+/* Estilos de Formulario nativos masivos */
+.form-group {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-control {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #252525;
   border: 1px solid var(--border-color);
   color: var(--text-main);
-  font-size: 1.8rem;
-  font-weight: bold;
-  padding: 20px 0;
+  padding: 14px;
+  font-size: 1.2rem;
   border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-.key-btn:active {
+.form-control:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.btn-submit {
+  width: 100%;
   background-color: var(--accent-color);
   color: #000000;
+  border: none;
+  padding: 16px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
-.key-action {
-  background-color: #3d3d3d;
+.btn-submit:active {
+  background-color: #00b359;
 }
