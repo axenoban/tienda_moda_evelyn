@@ -5,7 +5,8 @@ import { MonthlyBalanceView } from './views/MonthlyBalanceView.js';
 import { LiquidationView } from './views/LiquidationView.js';
 import { InventoryView } from './views/InventoryView.js';
 import { SeasonalPredictionView } from './views/SeasonalPredictionView.js';
-import { CloudSyncService } from '../data/services/CloudSyncService.js'; // Importación del servicio cloud
+import { CloudSyncService } from '../data/services/CloudSyncService.js';
+import { NotificationService } from '../data/services/NotificationService.js'; // Integración de alertas de hardware
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
@@ -45,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     targetView.render(viewContainer);
   }
 
+  mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
   modules.forEach(mod => {
     mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
   });
@@ -70,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     syncService.syncLocalDataToCloud(); // Ejecuta la hibridación transparente en la nube
   });
 
-  // 3. Suscripción en Tiempo Real: Reacciona ante cambios remotos generados por el otro socio[cite: 1]
+  // 3. Suscripción en Tiempo Real: Reacciona ante cambios remotos generados por el otro socio
   syncService.subscribeToRemoteChanges((payload) => {
     console.log("[FinaPro] Actualización remota sincronizada:", payload);
     
@@ -83,4 +85,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   });
+
+  // =========================================================================
+  // INITIALIZACIÓN DEL MÓDULO DE HARDWARE: NOTIFICACIONES PUSH
+  // =========================================================================
+  const notificationService = new NotificationService();
+  notificationService.init();
 });

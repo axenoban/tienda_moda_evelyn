@@ -3,7 +3,7 @@ import { ProductVariant } from '../../domain/entities/Variant.js';
 
 export class InventoryView {
   constructor() {
-    this.repository = new FinancialRepository();
+    this.repository = new FinancialRepository(); //
   }
 
   async render(container) {
@@ -11,7 +11,7 @@ export class InventoryView {
       <div style="padding: 16px; margin-bottom: 40px;">
         <h2 style="margin-top:0;">Inventario de SKUs</h2>
         <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:20px;">
-          Clasificación basada en la matriz de 4 atributos obligatorios del negocio.[cite: 2]
+          Clasificación basada en la matriz de 4 atributos obligatorios del negocio.
         </p>
 
         <form id="variant-form" style="background: var(--bg-surface); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -50,14 +50,14 @@ export class InventoryView {
     const form = container.querySelector('#variant-form');
     form.addEventListener('submit', (e) => this._handleSubmit(e, container));
 
-    // Cargar la lista inicial de SKUs desde IndexedDB
     await this._loadVariantsList(container);
   }
 
   async _loadVariantsList(container) {
     const listDiv = container.querySelector('#variants-list');
     try {
-      const items = await this.repository.getAllVariants();[cite: 1]
+      // Removida la fuga de sintaxis externa que bloqueaba a Vite
+      const items = await this.repository.getAllVariants(); //
 
       if (items.length === 0) {
         listDiv.innerHTML = `<p style="color:var(--text-muted); font-style:italic;">No hay variantes registradas en este dispositivo.</p>`;
@@ -71,7 +71,7 @@ export class InventoryView {
             <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">ID: ${item.id}</span>
           </div>
           <div style="margin-top:4px; color:var(--text-muted); font-size:0.85rem;">
-            Atributos: <span style="color:#e0e0e0;">${item.detalle}</span> | Tela: <span style="color:#e0e0e0;">${item.tela}</span>[cite: 2]
+            Atributos: <span style="color:#e0e0e0;">${item.detalle}</span> | Tela: <span style="color:#e0e0e0;">${item.tela}</span>
           </div>
         </div>
       `).join('');
@@ -90,18 +90,16 @@ export class InventoryView {
         tela: container.querySelector('#vTela').value.trim()
       };
 
-      // Validar datos utilizando la entidad limpia de dominio
-      const variantEntity = new ProductVariant(variantData);[cite: 1]
+      const variantEntity = new ProductVariant(variantData); //[cite: 1]
       if (!variantEntity.isValid()) {
-        throw new Error("Todos los campos de la matriz son obligatorios.");[cite: 2]
+        throw new Error("Todos los campos de la matriz son obligatorios."); //[cite: 2]
       }
 
       const id = 'sku_' + Date.now().toString().slice(-6);
-      await this.repository.saveVariant(id, variantData);[cite: 1]
+      await this.repository.saveVariant(id, variantData); //[cite: 1]
 
-      if (navigator.vibrate) navigator.vibrate([40, 40]); // Alerta háptica nativa
+      if (navigator.vibrate) navigator.vibrate([40, 40]); //[cite: 1]
       
-      // Limpiar formulario y refrescar la lista reactivamente
       container.querySelector('#variant-form').reset();
       await this._loadVariantsList(container);
     } catch (err) {

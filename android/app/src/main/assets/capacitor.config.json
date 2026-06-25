@@ -1,0 +1,8 @@
+{
+	"appId": "com.modaevelyn.finapro",
+	"appName": "FinaPro",
+	"webDir": "dist",
+	"server": {
+		"androidScheme": "https"
+	}
+}

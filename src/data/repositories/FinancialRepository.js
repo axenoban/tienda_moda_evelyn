@@ -5,13 +5,13 @@ export class FinancialRepository {
     this.localDb = new LocalDataSource();
   }
 
-  // Guarda un lote de corte marcándolo como pendiente de sincronización en la nube
+  // Guarda un lote de corte marcándolo como pendiente de sincronización
   async saveCuttingBatch(batchId, batchData, financialResults) {
     const record = {
       id: batchId,
-      metadata: batchData, // Contiene tizadas, modelos, telas, etc.
-      results: financialResults,   // Contiene el CUP y precios calculados
-      synced: false,               // Control para Supabase/Firebase
+      metadata: batchData,
+      results: financialResults,
+      synced: false,
       createdAt: new Date().toISOString()
     };
 
@@ -22,7 +22,7 @@ export class FinancialRepository {
   async saveExpense(expenseId, expenseData) {
     const record = {
       id: expenseId,
-      ...expenseData,             // Categoría, monto (Bs.), descripción
+      ...expenseData,
       synced: false,
       createdAt: new Date().toISOString()
     };
@@ -53,25 +53,25 @@ export class FinancialRepository {
   async saveVariant(variantId, variantData) {
     const record = {
       id: variantId,
-      ...variantData, // Contiene modelo, talla, detalle, tela[cite: 2]
+      ...variantData,
       synced: false,
       createdAt: new Date().toISOString()
     };
-    return await this.localDb.setItem(`variant_${variantId}`, record);[cite: 1]
+
+    return await this.localDb.setItem(`variant_${variantId}`, record);
   }
 
   // Recupera todas las variantes registradas en el inventario offline
   async getAllVariants() {
-    const keys = await this.localDb.getAllKeys();[cite: 1]
+    const keys = await this.localDb.getAllKeys();
     const variants = [];
 
     for (const key of keys) {
       if (key.startsWith('variant_')) {
-        const record = await this.localDb.getItem(key);[cite: 1]
+        const record = await this.localDb.getItem(key);
         if (record) variants.push(record);
       }
     }
-    // Ordenar por fecha de creación (de más reciente a más antiguo)
     return variants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   }
 }

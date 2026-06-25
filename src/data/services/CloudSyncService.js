@@ -12,7 +12,7 @@ export class CloudSyncService {
 
   // Ejecuta la sincronización en cascada de registros pendientes hacia la nube
   async syncLocalDataToCloud() {
-    if (!navigator.onLine) return console.log("Dispositivo offline. Sincronización pospuesta.");[cite: 1]
+    if (!navigator.onLine) return console.log("Dispositivo offline. Sincronización pospuesta.");
 
     try {
       const pendingRecords = await this.repository.getPendingSyncRecords();
@@ -37,7 +37,7 @@ export class CloudSyncService {
           await this.repository.localDb.setItem(key, record);
         }
       }
-      console.log("Sincronización multiusuario en tiempo real completada con éxito.");[cite: 1]
+      console.log("Sincronización multiusuario en tiempo real completada con éxito.");
     } catch (error) {
       console.error("Error durante la sincronización Cloud-First:", error.message);
     }
