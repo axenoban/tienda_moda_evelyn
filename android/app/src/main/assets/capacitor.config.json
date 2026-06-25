@@ -2,7 +2,6 @@
 	"appId": "com.modaevelyn.finapro",
 	"appName": "FinaPro",
 	"webDir": "dist",
-	"bundledWebRuntime": false,
 	"server": {
 		"androidScheme": "https"
 	}
