@@ -36,10 +36,7 @@ jobs:
         java-version: '17'
 
     - name: Sincronizar Código con Proyecto Android Nativo
-      run: |
-        npx cap init FinaPro com.modaevelyn.finapro --web-dir=dist
-        npx cap add android
-        npm run cap:sync
+      run: npx cap sync android
 
     - name: Compilar APK de Depuración (Debug APK)
       run: |
