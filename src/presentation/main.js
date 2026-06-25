@@ -1,6 +1,8 @@
 import { CuttingBatchView } from './views/CuttingBatchView.js';
+import { SalesView } from './views/SalesView.js';
 import { FamilyExpensesView } from './views/FamilyExpensesView.js';
 import { MonthlyBalanceView } from './views/MonthlyBalanceView.js';
+import { LiquidationView } from './views/LiquidationView.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
@@ -8,9 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const navContainer = document.createElement('div');
   navContainer.className = 'nav-tabs';
   navContainer.innerHTML = `
-    <button class="tab-btn active" id="tab-cutting">Mesa de Corte</button>
+    <button class="tab-btn active" id="tab-cutting">Corte</button>
+    <button class="tab-btn" id="tab-sales">Ventas</button>
     <button class="tab-btn" id="tab-expenses">Egresos</button>
-    <button class="tab-btn" id="tab-balance">Balance Cascada</button>
+    <button class="tab-btn" id="tab-balance">Cascada</button>
+    <button class="tab-btn" id="tab-liq">Saldos</button>
   `;
   body.insertBefore(navContainer, body.firstChild);
 
@@ -18,13 +22,13 @@ document.addEventListener('DOMContentLoaded', () => {
   viewContainer.id = 'view-content';
   body.appendChild(viewContainer);
 
-  const cuttingView = new CuttingBatchView();
-  const expensesView = new FamilyExpensesView();
-  const balanceView = new MonthlyBalanceView();
-
-  const btnCutting = document.getElementById('tab-cutting');
-  const btnExpenses = document.getElementById('tab-expenses');
-  const btnBalance = document.getElementById('tab-balance');
+  const modules = [
+    { btn: document.getElementById('tab-cutting'), view: new CuttingBatchView() },
+    { btn: document.getElementById('tab-sales'), view: new SalesView() },
+    { btn: document.getElementById('tab-expenses'), view: new FamilyExpensesView() },
+    { btn: document.getElementById('tab-balance'), view: new MonthlyBalanceView() },
+    { btn: document.getElementById('tab-liq'), view: new LiquidationView() }
+  ];
 
   function switchView(activeTab, targetView) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -32,9 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     targetView.render(viewContainer);
   }
 
-  btnCutting.addEventListener('click', () => switchView(btnCutting, cuttingView));
-  btnExpenses.addEventListener('click', () => switchView(btnExpenses, expensesView));
-  btnBalance.addEventListener('click', () => switchView(btnBalance, balanceView));
+  modules.forEach(mod => {
+    mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
+  });
 
-  switchView(btnCutting, cuttingView);
+  switchView(modules[0].btn, modules[0].view);
 });
