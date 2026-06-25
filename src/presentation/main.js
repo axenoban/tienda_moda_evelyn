@@ -4,6 +4,7 @@ import { FamilyExpensesView } from './views/FamilyExpensesView.js';
 import { MonthlyBalanceView } from './views/MonthlyBalanceView.js';
 import { LiquidationView } from './views/LiquidationView.js';
 import { InventoryView } from './views/InventoryView.js';
+import { SeasonalPredictionView } from './views/SeasonalPredictionView.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
@@ -13,9 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
   navContainer.innerHTML = `
     <button class="tab-btn active" id="tab-cutting">Corte</button>
     <button class="tab-btn" id="tab-sales">Ventas</button>
-    <button class="tab-btn" id="tab-inventory">Inventario</button>
+    <button class="tab-btn" id="tab-inventory">Stock</button>
     <button class="tab-btn" id="tab-expenses">Egresos</button>
     <button class="tab-btn" id="tab-balance">Cascada</button>
+    <button class="tab-btn" id="tab-seasonal">Ciclos</button>
     <button class="tab-btn" id="tab-liq">Saldos</button>
   `;
   body.insertBefore(navContainer, body.firstChild);
@@ -30,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { btn: document.getElementById('tab-inventory'), view: new InventoryView() },
     { btn: document.getElementById('tab-expenses'), view: new FamilyExpensesView() },
     { btn: document.getElementById('tab-balance'), view: new MonthlyBalanceView() },
+    { btn: document.getElementById('tab-seasonal'), view: new SeasonalPredictionView() },
     { btn: document.getElementById('tab-liq'), view: new LiquidationView() }
   ];
 
