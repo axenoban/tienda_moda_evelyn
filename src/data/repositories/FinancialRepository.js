@@ -48,4 +48,30 @@ export class FinancialRepository {
     }
     return pending;
   }
+
+  // Guarda una nueva variante de producto en el almacenamiento local
+  async saveVariant(variantId, variantData) {
+    const record = {
+      id: variantId,
+      ...variantData, // Contiene modelo, talla, detalle, tela[cite: 2]
+      synced: false,
+      createdAt: new Date().toISOString()
+    };
+    return await this.localDb.setItem(`variant_${variantId}`, record);[cite: 1]
+  }
+
+  // Recupera todas las variantes registradas en el inventario offline
+  async getAllVariants() {
+    const keys = await this.localDb.getAllKeys();[cite: 1]
+    const variants = [];
+
+    for (const key of keys) {
+      if (key.startsWith('variant_')) {
+        const record = await this.localDb.getItem(key);[cite: 1]
+        if (record) variants.push(record);
+      }
+    }
+    // Ordenar por fecha de creación (de más reciente a más antiguo)
+    return variants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  }
 }
