@@ -6,13 +6,13 @@ import { LiquidationView } from './views/LiquidationView.js';
 import { InventoryView } from './views/InventoryView.js';
 import { SeasonalPredictionView } from './views/SeasonalPredictionView.js';
 import { CloudSyncService } from '../data/services/CloudSyncService.js';
-import { NotificationService } from '../data/services/NotificationService.js'; // Integración de alertas de hardware
+import { NotificationService } from '../data/services/NotificationService.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
-  const syncService = new CloudSyncService(); // Instancia del motor de sincronización multiusuario
+  const syncService = new CloudSyncService();
   
-  // Barra de navegación superior fija
+  // Contenedor de navegación superior fija (Header nativo)
   const navContainer = document.createElement('div');
   navContainer.className = 'nav-tabs';
   navContainer.innerHTML = `
@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <button class="tab-btn" id="tab-seasonal">Ciclos</button>
     <button class="tab-btn" id="tab-liq">Saldos</button>
   `;
-  body.insertBefore(navContainer, body.firstChild);
+  body.appendChild(navContainer);
 
+  // Área de visualización dinámica con scroll independiente
   const viewContainer = document.createElement('div');
   viewContainer.id = 'view-content';
   body.appendChild(viewContainer);
@@ -43,40 +44,40 @@ document.addEventListener('DOMContentLoaded', () => {
   function switchView(activeTab, targetView) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     activeTab.classList.add('active');
-    targetView.render(viewContainer);
+    
+    // Suavizado de transición al cambiar de módulo
+    viewContainer.style.opacity = '0';
+    setTimeout(() => {
+      targetView.render(viewContainer);
+      viewContainer.style.opacity = '1';
+    }, 50);
   }
 
-  mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
   modules.forEach(mod => {
-    mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
+    if (mod.btn) {
+      mod.btn.addEventListener('click', () => switchView(mod.btn, mod.view));
+    }
   });
 
-  switchView(modules[0].btn, modules[0].view);
+  // Inicializar la primera vista de forma segura
+  if (modules[0].btn) {
+    switchView(modules[0].btn, modules[0].view);
+  }
 
   // =========================================================================
   // AUTOMATIZACIÓN DEL EVENT LOOP DE SINCRONIZACIÓN (OFFLINE-FIRST)
   // =========================================================================
-  
-  // 1. Verificación inicial: Sincroniza al arrancar la app si ya cuenta con señal celular
   if (navigator.onLine) {
     syncService.syncLocalDataToCloud();
   }
 
-  // 2. Escuchador de Red Activo: Detecta la transición de Offline a Online de forma nativa
   window.addEventListener('online', () => {
-    // Alerta háptica sutil para indicar discretamente al socio que hay reconexión
-    if (navigator.vibrate) {
-      navigator.vibrate([100, 50, 100]);
-    }
-    console.log("[FinaPro] Conexión activa detectada. Iniciando vaciado de transacciones pendientes...");
-    syncService.syncLocalDataToCloud(); // Ejecuta la hibridación transparente en la nube
+    if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+    console.log("[FinaPro] Conexión activa detectada. Sincronizando...");
+    syncService.syncLocalDataToCloud();
   });
 
-  // 3. Suscripción en Tiempo Real: Reacciona ante cambios remotos generados por el otro socio
   syncService.subscribeToRemoteChanges((payload) => {
-    console.log("[FinaPro] Actualización remota sincronizada:", payload);
-    
-    // Si el usuario está visualizando el Inventario o el Balance, se puede forzar un refresco dinámico
     const activeTab = document.querySelector('.tab-btn.active');
     if (activeTab && (activeTab.id === 'tab-inventory' || activeTab.id === 'tab-balance')) {
       const currentModule = modules.find(mod => mod.btn === activeTab);
@@ -86,9 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // =========================================================================
-  // INITIALIZACIÓN DEL MÓDULO DE HARDWARE: NOTIFICACIONES PUSH
-  // =========================================================================
+  // Notificaciones de hardware nativas
   const notificationService = new NotificationService();
   notificationService.init();
 });
