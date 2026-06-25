@@ -39,9 +39,9 @@ jobs:
       run: npx cap sync android
 
     - name: Compilar APK de Depuración (Debug APK)
+      working-directory: android
       run: |
-        cd android
-        chmod +x ./gradlew
+        chmod +x gradlew
         ./gradlew assembleDebug
 
     - name: Preservar Archivo Binario (.APK) como Artefacto
