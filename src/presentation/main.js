@@ -5,10 +5,13 @@ import { MonthlyBalanceView } from './views/MonthlyBalanceView.js';
 import { LiquidationView } from './views/LiquidationView.js';
 import { InventoryView } from './views/InventoryView.js';
 import { SeasonalPredictionView } from './views/SeasonalPredictionView.js';
+import { CloudSyncService } from '../data/services/CloudSyncService.js'; // Importación del servicio cloud
 
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.body;
+  const syncService = new CloudSyncService(); // Instancia del motor de sincronización multiusuario
   
+  // Barra de navegación superior fija
   const navContainer = document.createElement('div');
   navContainer.className = 'nav-tabs';
   navContainer.innerHTML = `
@@ -47,4 +50,37 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   switchView(modules[0].btn, modules[0].view);
+
+  // =========================================================================
+  // AUTOMATIZACIÓN DEL EVENT LOOP DE SINCRONIZACIÓN (OFFLINE-FIRST)
+  // =========================================================================
+  
+  // 1. Verificación inicial: Sincroniza al arrancar la app si ya cuenta con señal celular
+  if (navigator.onLine) {
+    syncService.syncLocalDataToCloud();
+  }
+
+  // 2. Escuchador de Red Activo: Detecta la transición de Offline a Online de forma nativa
+  window.addEventListener('online', () => {
+    // Alerta háptica sutil para indicar discretamente al socio que hay reconexión
+    if (navigator.vibrate) {
+      navigator.vibrate([100, 50, 100]);
+    }
+    console.log("[FinaPro] Conexión activa detectada. Iniciando vaciado de transacciones pendientes...");
+    syncService.syncLocalDataToCloud(); // Ejecuta la hibridación transparente en la nube
+  });
+
+  // 3. Suscripción en Tiempo Real: Reacciona ante cambios remotos generados por el otro socio[cite: 1]
+  syncService.subscribeToRemoteChanges((payload) => {
+    console.log("[FinaPro] Actualización remota sincronizada:", payload);
+    
+    // Si el usuario está visualizando el Inventario o el Balance, se puede forzar un refresco dinámico
+    const activeTab = document.querySelector('.tab-btn.active');
+    if (activeTab && (activeTab.id === 'tab-inventory' || activeTab.id === 'tab-balance')) {
+      const currentModule = modules.find(mod => mod.btn === activeTab);
+      if (currentModule && typeof currentModule.view._loadVariantsList === 'function') {
+        currentModule.view._loadVariantsList(viewContainer);
+      }
+    }
+  });
 });
